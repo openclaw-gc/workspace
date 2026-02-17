@@ -16,13 +16,17 @@
 - **Key files:** `deliverables/04-dashboard-plan.md`
 
 ### Infrastructure (OpenClaw/VPS)
-- **Status:** Operational, partially hardened
+- **Status:** Operational, hardened
+- **Complete:**
+  - ✅ Tailscale VPN setup (VPS 100.111.100.15, Mac 100.116.126.102)
+  - ✅ Domain registered (galeboetticher.cloud)
+  - ✅ GitHub org created (openclaw-gc)
+  - ✅ GitHub integration (workspace repo + automation)
 - **Open:**
-  - HTTPS setup — needs domain from GC → then reverse proxy + SSL
+  - HTTPS setup — deferred (Tailscale sufficient)
   - OpenClaw update v2026.2.12 → v2026.2.15 — needs GC approval
-  - `allowInsecureAuth: true` — temporary, remove after HTTPS
   - OpenAI billing limit reached — GC topping up
-- **Key files:** `deliverables/02-access-action-plan.md`, `memory/security-audit-2026-02-16.md`
+- **Key files:** `deliverables/02-access-action-plan.md`, `memory/security-audit-2026-02-16.md`, `skills/github/`
 
 ### Agentic Trading Architecture
 - **Status:** Research complete, awaiting green-light
@@ -57,8 +61,8 @@
 - **Coal Energy Report:** ✅ Complete — NEUTRAL/UNDERWEIGHT, contrarian met coal angle, emailed to GC
 
 ## Pending GC Decisions
-1. Domain/subdomain for HTTPS
-2. GitHub approach (new org vs existing)
+1. ~~Domain/subdomain for HTTPS~~ ✅ DONE (galeboetticher.cloud, Tailscale access)
+2. ~~GitHub approach~~ ✅ DONE (openclaw-gc org, workspace repo operational)
 3. Dashboard platform confirmation
 4. Vana portal MVP priorities
 5. Assistant network — when to start

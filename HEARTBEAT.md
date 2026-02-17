@@ -6,6 +6,7 @@ read_when:
 
 # HEARTBEAT.md
 
-# Keep this file empty (or with only comments) to skip heartbeat API calls.
-
-# Add tasks below when you want the agent to check something periodically.
+# Model Router Shadow Validation (next 24h only)
+# Every heartbeat: analyze recent messages, log what the router would have classified them as
+# Target: 50-100 classifications by tomorrow evening for analytics review
+# After validation complete, remove this task

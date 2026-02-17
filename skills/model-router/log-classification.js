@@ -9,20 +9,30 @@ const fs = require('fs');
 const path = require('path');
 
 // Import classifier
-const classifyMessage = require('./classifier.js');
-
+const TaskClassifier = require('./classifier.js');
+const CONFIG_PATH = path.join(__dirname, 'config.json');
 const LOG_PATH = path.join(__dirname, '.routing-log.jsonl');
+
+// Initialize classifier
+const classifier = new TaskClassifier(CONFIG_PATH);
 
 function logClassification(message, userId = 'unknown') {
   try {
-    const classification = classifyMessage(message);
+    const classification = classifier.classify({ message });
+    
+    // Map tier to model
+    const modelMap = {
+      simple: 'anthropic/claude-haiku-4-5',
+      standard: 'anthropic/claude-sonnet-4-5',
+      complex: 'anthropic/claude-opus-4-6'
+    };
     
     const logEntry = {
       timestamp: new Date().toISOString(),
       userId,
       message: message.slice(0, 100), // Truncate for privacy
       tier: classification.tier,
-      model: classification.model,
+      model: modelMap[classification.tier],
       confidence: classification.confidence,
       reasoning: classification.reasoning,
       shadowMode: true,
@@ -30,7 +40,7 @@ function logClassification(message, userId = 'unknown') {
     
     fs.appendFileSync(LOG_PATH, JSON.stringify(logEntry) + '\n');
     
-    return classification;
+    return { ...classification, model: modelMap[classification.tier] };
   } catch (err) {
     console.error('Classification logging failed:', err.message);
     return null;

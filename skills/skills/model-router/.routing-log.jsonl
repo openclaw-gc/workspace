@@ -1,1 +1,0 @@
-{"timestamp":1771278494548,"date":"2026-02-16T21:48:14.548Z","tier":"simple","confidence":0.5,"reasoning":"simple signals: 2, complex signals: 2, length: 28 chars, context: 35k tokens","model":"anthropic/claude-haiku-4-5","budgetOverride":false,"contextSize":35000,"mode":"shadow","messagePreview":"Build a dynamic model router","budgetStatus":{"daily":"0.00%","monthly":"0.00%"}}

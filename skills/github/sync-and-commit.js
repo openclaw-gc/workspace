@@ -30,24 +30,32 @@ function exec(cmd, opts = {}) {
 function syncFiles() {
   console.log('📁 Syncing workspace files...');
   
-  // Copy key files/dirs (selective sync to avoid temp files)
-  const filesToSync = [
+  // Copy key files (root level)
+  const rootFiles = [
     'AGENTS.md', 'SOUL.md', 'USER.md', 'IDENTITY.md', 'TOOLS.md', 
-    'HEARTBEAT.md', 'MEMORY.md', 'PROJECT-STATE.md',
-    'deliverables/', 'skills/', 'specs/', 'memory/'
+    'HEARTBEAT.md', 'MEMORY.md'
   ];
   
-  for (const item of filesToSync) {
-    const src = path.join(WORKSPACE_DIR, item);
-    const dest = path.join(REPO_DIR, item);
+  for (const file of rootFiles) {
+    const src = path.join(WORKSPACE_DIR, file);
+    const dest = path.join(REPO_DIR, file);
+    if (fs.existsSync(src)) {
+      exec(`cp ${src} ${dest}`, { cwd: WORKSPACE_DIR });
+    }
+  }
+  
+  // Copy directories (remove dest first to avoid nesting)
+  const dirsToSync = ['deliverables', 'skills', 'specs', 'memory'];
+  
+  for (const dir of dirsToSync) {
+    const src = path.join(WORKSPACE_DIR, dir);
+    const dest = path.join(REPO_DIR, dir);
     
     if (!fs.existsSync(src)) continue;
     
-    if (fs.statSync(src).isDirectory()) {
-      exec(`cp -r ${src} ${dest}`, { cwd: WORKSPACE_DIR });
-    } else {
-      exec(`cp ${src} ${dest}`, { cwd: WORKSPACE_DIR });
-    }
+    // Remove dest and recreate
+    exec(`rm -rf ${dest}`, { cwd: REPO_DIR });
+    exec(`cp -r ${src} ${dest}`, { cwd: WORKSPACE_DIR });
   }
   
   // Remove temp files from repo

@@ -1,0 +1,105 @@
+{
+  "profiles": {
+    "n.randello@easygo.io": {
+      "name": "Nadia Randello",
+      "relationship": "family",
+      "role": "Wife, Group Head of Legal @ EasyGo",
+      "formality": "casual-professional",
+      "tone": "dry-humor",
+      "length": "brief",
+      "sentences": "3-4",
+      "priority": "high",
+      "responsePattern": "witty-but-efficient",
+      "notes": "Appreciates self-aware humor. No corporate fluff. Keep it tight. Saul Goodman references work well.",
+      "aliases": ["nadia.randello@gmail.com"],
+      "learningData": {
+        "approvals": 2,
+        "revisions": 0,
+        "lastInteraction": "2026-02-17T07:12:00Z"
+      }
+    },
+    "nadia.randello@gmail.com": {
+      "name": "Nadia Randello",
+      "relationship": "family",
+      "role": "Wife, Group Head of Legal @ EasyGo",
+      "formality": "casual-professional",
+      "tone": "dry-humor",
+      "length": "brief",
+      "sentences": "3-4",
+      "priority": "high",
+      "responsePattern": "witty-but-efficient",
+      "notes": "Appreciates self-aware humor. No corporate fluff. Keep it tight. Saul Goodman references work well. Same profile as work email. Also accepts formal memos when context requires (air fryer research approved). Responds well to brief follow-ups with dry humor (toxicity reply approved).",
+      "learningData": {
+        "approvals": 3,
+        "revisions": 0,
+        "lastInteraction": "2026-02-17T09:25:00Z"
+      }
+    },
+    "Adrian.Cudrig@morganstanley.com": {
+      "name": "Adrian Cudrig",
+      "relationship": "family",
+      "role": "Brother, Morgan Stanley",
+      "formality": "professional-casual",
+      "tone": "direct",
+      "length": "brief",
+      "sentences": "2-3",
+      "priority": "normal",
+      "responsePattern": "efficient-no-filler",
+      "notes": "No filler. Saul Goodman references land well. Finance professional = respects brevity.",
+      "learningData": {
+        "approvals": 1,
+        "revisions": 0,
+        "lastInteraction": "2026-02-17T06:08:00Z"
+      }
+    },
+    "giancarlo.cudrig@gmail.com": {
+      "name": "Giancarlo Cudrig (GC)",
+      "relationship": "principal",
+      "role": "Boss, Founder Cryptyx, incoming Head of Finance @ Vana",
+      "formality": "direct",
+      "tone": "structured-analytical",
+      "length": "varies",
+      "sentences": "context-dependent",
+      "priority": "urgent",
+      "responsePattern": "clarity-over-charm",
+      "notes": "No hype. No emotional amplification. Structural precision. Think one layer deeper. Flag uncertainty always.",
+      "learningData": {
+        "approvals": 0,
+        "revisions": 0,
+        "lastInteraction": "2026-02-17T06:12:00Z"
+      }
+    }
+  },
+  "defaults": {
+    "unknown-professional": {
+      "formality": "professional",
+      "tone": "polite-guarded",
+      "length": "standard",
+      "sentences": "4-6",
+      "priority": "await-approval",
+      "responsePattern": "professional-distance",
+      "notes": "Default to professional distance until relationship established. Always require approval before sending."
+    },
+    "system-notification": {
+      "formality": "n/a",
+      "tone": "ignore",
+      "length": "n/a",
+      "priority": "low",
+      "responsePattern": "no-response",
+      "notes": "Google/GitHub/automated notifications don't need responses. Flag for batch cleanup only."
+    }
+  },
+  "profileDimensions": {
+    "relationship": ["family", "colleague", "client", "vendor", "friend", "unknown"],
+    "formality": ["casual", "casual-professional", "professional-casual", "professional", "executive"],
+    "tone": ["warm", "direct", "witty", "dry-humor", "formal", "polite-guarded", "structured-analytical"],
+    "length": ["brief", "standard", "detailed"],
+    "priority": ["urgent", "high", "normal", "low", "await-approval"]
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2026-02-17T06:12:00Z",
+    "totalProfiles": 3,
+    "learningEnabled": true
+  }
+}

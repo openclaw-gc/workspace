@@ -41,20 +41,29 @@
 - **Next:** Revisit after Vana Phase 1 settled
 
 ### Model Cost Optimization
-- **Status:** ✅ Phase 1 complete (switched to Sonnet 4.5)
-- **Status:** ✅ Phase 2 complete (dynamic router built, shadow mode ready)
-- **Next:** Shadow testing → tuning → enforcement
+- **Status:** ✅ Complete (Sonnet 4.5 active, router in shadow mode)
+- **Next:** Review shadow logs after 1 week, tune thresholds if needed
 - **Key files:** `deliverables/07-model-cost-optimization.md`, `specs/dynamic-model-router.md`, `skills/model-router/`
 
 ### Gmail Monitoring & Sender Profiling
-- **Status:** ✅ Phase 1 complete (monitoring + cron), ✅ Profiling system built
-- **Operational:** Gmail monitor running every 10 min (cron job active)
-- **Next:** Integrate profiler into monitor.js for hyper-personalized responses
-- **Key files:** 
-  - `skills/gmail-monitor/monitor.js` (IMAP monitoring)
-  - `skills/gmail-monitor/profiler.js` (sender profiling)
-  - `memory/sender-profiles.json` (Nadia, Adrian, GC profiles)
-  - `deliverables/12-sender-profiling-system.md`
+- **Status:** ✅ Complete (monitoring + profiling operational)
+- **Operational:** Cron job running every 10 min, sender profiles active (Nadia, Adrian, GC)
+- **Next:** Monitor quality, expand profiles as needed
+- **Key files:** `skills/gmail-monitor/`, `memory/sender-profiles.json`, `deliverables/12-sender-profiling-system.md`
+
+### GitHub Integration & Automation
+- **Status:** ✅ Complete (repo operational, sync automation working)
+- **Repository:** https://github.com/openclaw-gc/workspace
+- **Automation:** `sync-and-commit.js` syncs workspace → GitHub
+- **Next:** Add auto-commit hooks for memory/deliverable changes
+- **Key files:** `skills/github/`, `deliverables/13-github-integration.md` (pending)
+
+### Memory Consolidation
+- **Status:** ✅ Complete (cron job scheduled, architecture established)
+- **Cron job:** Every Monday 8:00 AM AEDT (job ID: f039b63c-cec6-4295-be8a-d1a73f30787b)
+- **Architecture:** 3-layer system (auto-inject → session-start → on-demand)
+- **Next:** First run Feb 24, review consolidation quality after 2-3 weeks
+- **Key files:** `memory/MEMORY.md`, `memory/PROJECT-STATE.md`, `specs/memory-consolidation-cron.md`, `deliverables/13-memory-consolidation-automation.md`
 
 ### Thematic Research (Ad-Hoc)
 - **Nuclear Energy Report:** ✅ Complete — OVERWEIGHT recommendation, emailed to GC

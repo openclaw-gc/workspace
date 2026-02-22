@@ -1,6 +1,6 @@
 {
-  "enabled": false,
-  "mode": "shadow",
+  "enabled": true,
+  "mode": "enforce",
   "tiers": {
     "simple": {
       "model": "anthropic/claude-haiku-4-5",
@@ -19,7 +19,7 @@
     }
   },
   "pricing": {
-    "anthropic/claude-haiku-4-5": { "input": 0.80, "output": 4.00 },
+    "anthropic/claude-haiku-4-5": { "input": 0.25, "output": 1.25 },
     "anthropic/claude-sonnet-4-5": { "input": 3.00, "output": 15.00 },
     "anthropic/claude-opus-4-6": { "input": 15.00, "output": 75.00 },
     "google/gemini-2.5-flash": { "input": 0.15, "output": 0.60 },
@@ -27,8 +27,8 @@
     "openai/gpt-5.2": { "input": 10.00, "output": 40.00 }
   },
   "budgets": {
-    "daily": 10.00,
-    "monthly": 200.00,
+    "daily": 8.00,
+    "monthly": 150.00,
     "alertThresholds": {
       "warning": 0.8,
       "critical": 0.95
@@ -37,12 +37,21 @@
   "classification": {
     "simpleKeywords": [
       "quick", "what time", "what date", "list", "show", "read",
-      "status", "check", "get", "fetch", "simple"
+      "status", "check", "get", "fetch", "simple", "yes", "no",
+      "ok", "thanks", "got it", "looks good"
+    ],
+    "standardKeywords": [
+      "schedule", "email", "send", "write", "draft", "prepare",
+      "coordinate", "arrange", "organize", "summarize", "explain",
+      "debug", "fix", "troubleshoot", "investigate", "review",
+      "update", "modify", "edit", "directions", "instructions"
     ],
     "complexKeywords": [
       "design", "architect", "strategy", "framework", "comprehensive",
       "detailed analysis", "research and write", "build", "create",
-      "implement", "multi-step", "think through"
+      "implement", "multi-step", "think through", "integration",
+      "full", "complete", "develop", "construct", "engineer",
+      "optimize", "analyze deeply", "go for", "drill into"
     ],
     "lengthThresholds": {
       "simple": 100,

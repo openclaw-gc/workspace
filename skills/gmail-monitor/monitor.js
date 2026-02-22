@@ -25,22 +25,20 @@ const CONFIG = {
   queueFile: '/data/.openclaw/workspace/memory/email-queue.json',
   logFile: '/data/.openclaw/workspace/memory/gmail-log.jsonl',
   lastCheckFile: '/data/.openclaw/workspace/memory/.gmail-last-check',
+  processedIdsFile: '/data/.openclaw/workspace/memory/.gmail-processed-ids.json',
   gcEmail: 'giancarlo.cudrig@gmail.com',
-  telegramChatId: '1434318999'
-};
-
-// Label configuration
-const LABELS = {
-  'URGENT': { color: '#ff0000' },
-  'AWAITING-APPROVAL': { color: '#ff9900' },
-  'APPROVED': { color: '#00ff00' },
-  'SENT': { color: '#0099ff' },
-  'FROM-GC': { color: '#9900ff' },
-  'EXTERNAL': { color: '#ff00ff' },
-  'VANA': { color: '#00ffff' },
-  'CRYPTYX': { color: '#ffff00' },
-  'INFRASTRUCTURE': { color: '#666666' },
-  'REFERENCE': { color: '#999999' }
+  telegramChatId: '1434318999',
+  
+  // System senders - auto-ignore (no response needed)
+  systemSenders: [
+    'no-reply@accounts.google.com',
+    'googlecloud@google.com',
+    'noreply@github.com',
+    'calendar-notification@google.com',
+    'drive-shares-noreply@google.com',
+    'no-reply@calendar.google.com',
+    'notifications.google.com'
+  ]
 };
 
 class GmailMonitor {
@@ -50,6 +48,9 @@ class GmailMonitor {
     this.lastCheck = this.loadLastCheck();
     this.profiler = new SenderProfiler();
     this.processedIds = this.loadProcessedIds();
+    
+    // Dedupe queue on load
+    this.dedupeQueue();
   }
 
   loadQueue() {
@@ -61,6 +62,34 @@ class GmailMonitor {
       console.error('Error loading queue:', err);
     }
     return { pending: [], approved: [], sent: [] };
+  }
+  
+  dedupeQueue() {
+    // Remove duplicate entries based on message ID
+    const seenIds = new Set();
+    const deduped = {
+      pending: [],
+      approved: this.queue.approved || [],
+      sent: this.queue.sent || []
+    };
+    
+    for (const item of this.queue.pending || []) {
+      if (!seenIds.has(item.id)) {
+        seenIds.add(item.id);
+        
+        // Also filter out system notifications
+        if (!this.isSystemSender(item.from)) {
+          deduped.pending.push(item);
+        }
+      }
+    }
+    
+    const removed = (this.queue.pending?.length || 0) - deduped.pending.length;
+    if (removed > 0) {
+      console.log(`🧹 Deduped queue: removed ${removed} duplicate/system entries`);
+      this.queue = deduped;
+      this.saveQueue();
+    }
   }
 
   saveQueue() {
@@ -80,17 +109,22 @@ class GmailMonitor {
   }
 
   loadProcessedIds() {
-    const processedFile = path.join(CONFIG.workspace, 'memory', '.gmail-processed-ids.json');
     try {
-      if (fs.existsSync(processedFile)) {
-        const data = JSON.parse(fs.readFileSync(processedFile, 'utf8'));
+      if (fs.existsSync(CONFIG.processedIdsFile)) {
+        const data = JSON.parse(fs.readFileSync(CONFIG.processedIdsFile, 'utf8'));
         // Keep only IDs from last 7 days
         const cutoff = Date.now() - (7 * 24 * 3600000);
-        return new Set(
-          Object.entries(data)
-            .filter(([id, timestamp]) => timestamp > cutoff)
-            .map(([id]) => id)
-        );
+        const filtered = Object.entries(data)
+          .filter(([id, timestamp]) => timestamp > cutoff)
+          .reduce((acc, [id, timestamp]) => {
+            acc[id] = timestamp;
+            return acc;
+          }, {});
+        
+        // Save cleaned version
+        fs.writeFileSync(CONFIG.processedIdsFile, JSON.stringify(filtered, null, 2));
+        
+        return new Set(Object.keys(filtered));
       }
     } catch (err) {
       console.error('Error loading processed IDs:', err);
@@ -98,17 +132,15 @@ class GmailMonitor {
     return new Set();
   }
 
-  saveProcessedId(messageId) {
-    const processedFile = path.join(CONFIG.workspace, 'memory', '.gmail-processed-ids.json');
+  saveProcessedIds() {
     try {
-      let data = {};
-      if (fs.existsSync(processedFile)) {
-        data = JSON.parse(fs.readFileSync(processedFile, 'utf8'));
+      const data = {};
+      for (const id of this.processedIds) {
+        data[id] = Date.now();
       }
-      data[messageId] = Date.now();
-      fs.writeFileSync(processedFile, JSON.stringify(data, null, 2));
+      fs.writeFileSync(CONFIG.processedIdsFile, JSON.stringify(data, null, 2));
     } catch (err) {
-      console.error('Error saving processed ID:', err);
+      console.error('Error saving processed IDs:', err);
     }
   }
 
@@ -122,7 +154,14 @@ class GmailMonitor {
       ...entry
     };
     fs.appendFileSync(CONFIG.logFile, JSON.stringify(logEntry) + '\n');
-    console.log(JSON.stringify(logEntry, null, 2));
+  }
+  
+  isSystemSender(email) {
+    if (!email) return false;
+    const normalized = email.toLowerCase();
+    return CONFIG.systemSenders.some(sender => 
+      normalized.includes(sender.toLowerCase())
+    );
   }
 
   async connect() {
@@ -149,14 +188,13 @@ class GmailMonitor {
 
   async checkInbox() {
     return new Promise((resolve, reject) => {
-      this.imap.openBox('INBOX', true, (err, box) => {  // Read-only mode
+      this.imap.openBox('INBOX', true, (err, box) => {
         if (err) {
           reject(err);
           return;
         }
 
-        // Search for emails since last check (time-based, not UNSEEN flag)
-        // This catches replies in threads even if original email was marked as seen
+        // Search for emails since last check
         const since = new Date(this.lastCheck);
         const searchCriteria = [['SINCE', since]];
         
@@ -176,16 +214,7 @@ class GmailMonitor {
 
           console.log(`Found ${results.length} email(s) since last check`);
           
-          // Filter out emails we've already processed
-          const newResults = results.slice(0, Math.min(results.length, 20)); // Limit to 20 most recent
-          
-          if (newResults.length === 0) {
-            console.log('No new emails to process');
-            resolve([]);
-            return;
-          }
-          
-          const fetch = this.imap.fetch(newResults, { bodies: '' });
+          const fetch = this.imap.fetch(results, { bodies: '' });
           const emails = [];
 
           fetch.on('message', (msg, seqno) => {
@@ -210,9 +239,16 @@ class GmailMonitor {
   }
 
   async processEmails(emails) {
+    let newCount = 0;
+    let dupCount = 0;
+    let sysCount = 0;
+    
     for (const email of emails) {
       try {
-        await this.processEmail(email);
+        const result = await this.processEmail(email);
+        if (result === 'new') newCount++;
+        else if (result === 'duplicate') dupCount++;
+        else if (result === 'system') sysCount++;
       } catch (err) {
         console.error('Error processing email:', err);
         this.log({
@@ -225,6 +261,13 @@ class GmailMonitor {
         });
       }
     }
+    
+    console.log(`📊 Processed: ${newCount} new, ${dupCount} duplicates, ${sysCount} system`);
+    
+    // Save processed IDs after batch
+    this.saveProcessedIds();
+    
+    return { new: newCount, duplicates: dupCount, system: sysCount };
   }
 
   async processEmail(email) {
@@ -233,10 +276,20 @@ class GmailMonitor {
     const body = email.text || email.html || '';
     const messageId = email.messageId;
 
+    if (!messageId) {
+      console.log('⚠️ Email has no message ID, skipping');
+      return 'skipped';
+    }
+
     // Skip if already processed
     if (this.processedIds.has(messageId)) {
-      console.log(`📭 Already processed: ${subject}`);
-      return;
+      return 'duplicate';
+    }
+
+    // Skip system senders
+    if (this.isSystemSender(from)) {
+      this.processedIds.add(messageId);
+      return 'system';
     }
 
     this.log({
@@ -248,7 +301,6 @@ class GmailMonitor {
 
     // Mark as processed
     this.processedIds.add(messageId);
-    this.saveProcessedId(messageId);
 
     // Detect if forwarded from GC
     const isFromGC = from.includes(CONFIG.gcEmail) || 
@@ -260,6 +312,8 @@ class GmailMonitor {
     } else {
       await this.handleExternalEmail(email, from, subject, body);
     }
+    
+    return 'new';
   }
 
   async handleForwardedEmail(email, from, subject, body) {
@@ -275,13 +329,11 @@ class GmailMonitor {
     let originalSubject = subject;
     let originalFrom = from;
     
-    // Simple forwarded message parsing
     const fwdMatch = body.match(/Subject: (.+)/);
     if (fwdMatch) {
       originalSubject = fwdMatch[1].trim();
     }
     
-    // Try to extract original sender for profiling
     const fromMatch = body.match(/From: (.+?)[\r\n]/);
     if (fromMatch) {
       originalFrom = fromMatch[1].trim();
@@ -304,9 +356,8 @@ class GmailMonitor {
       profileInfo = `\n**Profile:** ${profile.name || originalFrom}\n**Guidance:** ${guidance.tone}, ${guidance.length}\n`;
     }
 
-    // TODO: Implement actual task execution based on type
-    // For now, just log and notify GC via Telegram
-    await this.notifyTelegram(`📩 Forwarded email received: ${originalSubject}\n\nAction: ${isDraftReply ? 'Draft reply' : isResearch ? 'Research' : 'General'}${profileInfo}\n\nI'll process this and get back to you.`);
+    // TODO: Implement actual task execution
+    await this.notifyTelegram(`📩 Forwarded: ${originalSubject}\n\nAction: ${isDraftReply ? 'Draft reply' : isResearch ? 'Research' : 'General'}${profileInfo}`);
   }
 
   async handleExternalEmail(email, from, subject, body) {
@@ -316,23 +367,12 @@ class GmailMonitor {
     const profile = this.profiler.getProfile(from);
     const guidance = this.profiler.generateResponseGuidance(profile);
     
-    // Check if this is a system notification (no response needed)
-    if (profile.source === 'default-system') {
-      this.log({
-        type: 'system_notification_ignored',
-        from,
-        subject
-      });
-      console.log('📭 System notification - no action needed');
-      return;
-    }
-    
     // Add to pending approval queue
     const queueItem = {
       id: email.messageId || Date.now().toString(),
       from,
       subject,
-      body: body.substring(0, 500), // First 500 chars
+      body: body.substring(0, 500),
       receivedAt: new Date().toISOString(),
       status: 'pending',
       profile: {
@@ -355,29 +395,24 @@ class GmailMonitor {
       profile: profile.source
     });
 
-    // Build notification with profile guidance
+    // Build notification
     const profileInfo = profile.source === 'profile' 
-      ? `\n**Profile:** ${profile.name} (${profile.relationship})\n**Response guidance:** ${guidance.tone}, ${guidance.length} (${guidance.sentences} sentences)\n`
-      : `\n**Profile:** Unknown sender (professional default)\n`;
+      ? `\n**Profile:** ${profile.name} (${profile.relationship})\n**Guidance:** ${guidance.tone}, ${guidance.length}\n`
+      : `\n**Profile:** Unknown (professional default)\n`;
 
-    const message = `📧 **New email to Gale**\n\n` +
+    const message = `📧 **New email**\n\n` +
       `**From:** ${from}\n` +
       `**Subject:** ${subject}\n` +
       profileInfo +
-      `**Preview:**\n${body.substring(0, 300)}${body.length > 300 ? '...' : ''}\n\n` +
-      `Reply with:\n` +
-      `• \`APPROVE ${queueItem.id}\` - I'll draft a response\n` +
-      `• \`REVISE ${queueItem.id}: [instructions]\` - Custom response\n` +
-      `• \`IGNORE ${queueItem.id}\` - No action needed`;
+      `**Preview:** ${body.substring(0, 200)}${body.length > 200 ? '...' : ''}\n\n` +
+      `Actions: APPROVE, REVISE, IGNORE`;
 
     await this.notifyTelegram(message);
   }
 
   async notifyTelegram(message) {
-    // This will be called via OpenClaw's message tool
-    console.log('📱 Telegram notification:', message);
-    // TODO: Integrate with OpenClaw's Telegram bot
-    // For now, just log - the cron job will handle this via tool calls
+    console.log('📱 Notification:', message);
+    // TODO: Integrate with OpenClaw Telegram
   }
 
   async disconnect() {
@@ -392,8 +427,9 @@ class GmailMonitor {
       await this.connect();
       const emails = await this.checkInbox();
       
+      let stats = { new: 0, duplicates: 0, system: 0 };
       if (emails.length > 0) {
-        await this.processEmails(emails);
+        stats = await this.processEmails(emails);
       }
       
       this.saveLastCheck();
@@ -402,7 +438,10 @@ class GmailMonitor {
       console.log('✓ Check complete');
       return {
         success: true,
-        emailsProcessed: emails.length,
+        emailsChecked: emails.length,
+        newEmails: stats.new,
+        duplicates: stats.duplicates,
+        systemFiltered: stats.system,
         pendingApprovals: this.queue.pending.length
       };
     } catch (err) {

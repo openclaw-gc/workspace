@@ -56,6 +56,14 @@ class TaskClassifier {
       }
     });
 
+    if (this.config.classification.standardKeywords) {
+      this.config.classification.standardKeywords.forEach(keyword => {
+        if (lowerMsg.includes(keyword)) {
+          signals.standard += 2;
+        }
+      });
+    }
+
     this.config.classification.complexKeywords.forEach(keyword => {
       if (lowerMsg.includes(keyword)) {
         signals.complex += 2;

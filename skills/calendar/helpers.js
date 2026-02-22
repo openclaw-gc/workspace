@@ -52,14 +52,29 @@ function parseDateTime(dateStr, timeStr, timezone = DEFAULT_TIMEZONE) {
 }
 
 function formatEvent(event) {
-  const start = event.start.dateTime || event.start.date;
-  const end = event.end.dateTime || event.end.date;
+  const startDt = event.start.dateTime || event.start.date;
+  const endDt = event.end.dateTime || event.end.date;
+  
+  // Format times in Melbourne timezone
+  const formatTime = (dt) => {
+    if (!dt) return '';
+    const date = new Date(dt);
+    return date.toLocaleString('en-AU', {
+      timeZone: 'Australia/Melbourne',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
   
   return {
     id: event.id,
     summary: event.summary || '(No title)',
-    start,
-    end,
+    start: formatTime(startDt),
+    end: formatTime(endDt),
     location: event.location,
     description: event.description,
     attendees: event.attendees?.map(a => a.email) || [],
@@ -68,9 +83,53 @@ function formatEvent(event) {
   };
 }
 
+async function addGoogleMeetToEvent(calendar, calendarId, eventId) {
+  /**
+   * Add Google Meet conferencing to an event
+   * Uses service account with write access
+   */
+  try {
+    // Get the event
+    const event = await calendar.events.get({
+      calendarId,
+      eventId,
+    });
+    
+    // Skip if Meet link already exists
+    if (event.data.conferenceData?.entryPoints || event.data.hangoutLink) {
+      return event.data;
+    }
+    
+    // Add Google Meet
+    event.data.conferenceData = {
+      createRequest: {
+        requestId: `meet-${Date.now()}`,
+        conferenceSolutionKey: {
+          key: 'hangoutsMeet',
+        },
+      },
+    };
+    
+    // Update with conferenceDataVersion=1 to auto-create the Meet
+    const updated = await calendar.events.update({
+      calendarId,
+      eventId,
+      resource: event.data,
+      conferenceDataVersion: 1,
+    });
+    
+    return updated.data;
+  } catch (err) {
+    console.error('⚠️  Failed to add Google Meet:', err.message);
+    // Don't throw — let event creation succeed even if Meet fails
+    return null;
+  }
+}
+
 module.exports = {
   getCalendarClient,
   parseDateTime,
   formatEvent,
+  addGoogleMeetToEvent,
   DEFAULT_TIMEZONE,
 };

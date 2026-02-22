@@ -1,0 +1,10 @@
+{
+  "policy": {
+    "always_cc": ["giancarlo.cudrig@gmail.com"],
+    "from_address": "gale.boetticher.ai@gmail.com",
+    "signature": "Sent on behalf of GC via Gale",
+    "notes": "GC must be CC'd on ALL emails sent via gale.boetticher.ai@gmail.com. No exceptions."
+  },
+  "created": "2026-02-18T06:35:00+08:00",
+  "last_updated": "2026-02-18T06:35:00+08:00"
+}

@@ -1,0 +1,4 @@
+{"timestamp":"2026-02-18T13:45:00+08:00","tokensUsed":54824,"tokensRemaining":145176,"model":"anthropic/claude-sonnet-4-5"}
+{"timestamp":"2026-02-18T13:54:00+08:00","tokensUsed":61411,"tokensRemaining":138589,"model":"anthropic/claude-sonnet-4-5"}
+{"timestamp":"2026-02-18T14:32:00+08:00","tokensUsed":80479,"tokensRemaining":119521,"model":"anthropic/claude-sonnet-4-5","note":"Last message on Sonnet before router enabled"}
+{"timestamp":"2026-02-18T14:32:30+08:00","tokensUsed":191,"tokensRemaining":119330,"model":"anthropic/claude-haiku-4-5","note":"First message with automatic routing - switched to Haiku"}

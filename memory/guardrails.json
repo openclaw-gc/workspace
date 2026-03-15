@@ -1,0 +1,122 @@
+{
+  "description": "Operational Guardrails - Active Validation Rules",
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "tz-calculation",
+      "name": "Timezone Calculation",
+      "description": "All time statements must include explicit timezone math",
+      "trigger": ["time", "AM", "PM", "tomorrow", "today", "tonight", "hours", "minutes"],
+      "validation": {
+        "type": "regex",
+        "pattern": "GMT\\+8|Melbourne|AEDT|KL|Kuala Lumpur",
+        "message": "Time statement detected but no timezone context. Calculate: GMT+8 KL = Melbourne AEDT (GMT+8 + 3 hours). STOP and recalculate."
+      },
+      "severity": "CRITICAL",
+      "source": "MEMORY.md:Lessons Learned > Timestamps & Communication",
+      "added": "2026-02-24T10:00:00Z"
+    },
+    {
+      "id": "email-cc-policy",
+      "name": "Email CC Policy",
+      "description": "GC must be CC'd on ALL emails sent from gale.boetticher.ai@gmail.com",
+      "trigger": ["send_email", "email"],
+      "validation": {
+        "type": "assertion",
+        "check": "email.cc.includes('giancarlo.cudrig@gmail.com')",
+        "message": "Email CC check failed. GC MUST be CC'd on all outbound emails from gale.boetticher.ai@gmail.com"
+      },
+      "severity": "CRITICAL",
+      "source": "MEMORY.md:Key Decisions (Day 3) > EMAIL POLICY",
+      "added": "2026-02-24T10:00:00Z"
+    },
+    {
+      "id": "checkpoint-discipline",
+      "name": "Checkpoint Discipline",
+      "description": "Report status every 90 minutes: work product OR blocker OR reason for idle",
+      "trigger": ["checkpoint", "status"],
+      "validation": {
+        "type": "assertion",
+        "check": "status.includes(work_product) OR status.includes(blocker) OR status.includes(idle_reason)",
+        "message": "Checkpoint status incomplete. Must include: (1) What was completed, (2) What's blocking, or (3) Why idle"
+      },
+      "severity": "CRITICAL",
+      "source": "Memory System Redesign - Feb 24, 2026",
+      "added": "2026-02-24T10:00:00Z"
+    },
+    {
+      "id": "memory-coherence",
+      "name": "Memory Coherence Check",
+      "description": "Before operating on state, validate against PROJECT-STATE.md and MEMORY.md",
+      "trigger": ["decision", "execute", "deploy"],
+      "validation": {
+        "type": "assertion",
+        "check": "memory_search(context) AND PROJECT-STATE.verify(state)",
+        "message": "State coherence check needed. Query memory for context before assuming state."
+      },
+      "severity": "HIGH",
+      "source": "Memory System Redesign - Feb 24, 2026",
+      "added": "2026-02-24T10:00:00Z"
+    },
+    {
+      "id": "cost-circuit-breaker",
+      "name": "Cost Circuit Breaker",
+      "description": "Default to Haiku. Only escalate to Sonnet/Opus if complexity requires it.",
+      "trigger": ["model_selection"],
+      "validation": {
+        "type": "assertion",
+        "check": "model == 'haiku' || (model != 'haiku' AND complexity_score > threshold)",
+        "message": "Cost check: Ensure Haiku is default. Only escalate if task complexity truly requires it."
+      },
+      "severity": "HIGH",
+      "source": "MEMORY.md:Lessons Learned > Cost Management",
+      "added": "2026-02-24T10:00:00Z"
+    },
+    {
+      "id": "no-fabrication",
+      "name": "No Data Fabrication",
+      "description": "Never fabricate data, numbers, facts, or confidence levels",
+      "trigger": ["data", "numbers", "statistics", "claims"],
+      "validation": {
+        "type": "assertion",
+        "check": "NOT (fabricated OR simulated OR invented)",
+        "message": "STOP. This is fabricated/simulated data. Replace with: (1) Real data, (2) Explicit uncertainty, or (3) 'I don't know'"
+      },
+      "severity": "CRITICAL",
+      "source": "MEMORY.md:GC > CRITICAL",
+      "added": "2026-02-24T10:00:00Z"
+    },
+    {
+      "id": "flag-uncertainty",
+      "name": "Flag Uncertainty Explicitly",
+      "description": "Always separate opinion from model inference. Flag soft logic.",
+      "trigger": ["inference", "opinion", "analysis"],
+      "validation": {
+        "type": "assertion",
+        "check": "conclusion.includes('uncertain' OR 'soft logic' OR 'confidence')",
+        "message": "Uncertainty not flagged. Add: confidence level, soft assumptions, or 'this is an opinion'"
+      },
+      "severity": "HIGH",
+      "source": "MEMORY.md:GC > Always",
+      "added": "2026-02-24T10:00:00Z"
+    }
+  ],
+  "validation_hooks": {
+    "pre_output": [
+      "tz-calculation",
+      "email-cc-policy",
+      "no-fabrication",
+      "flag-uncertainty"
+    ],
+    "pre_execute": [
+      "memory-coherence",
+      "cost-circuit-breaker"
+    ],
+    "periodic": [
+      "checkpoint-discipline"
+    ]
+  },
+  "audit_all_validations": true,
+  "fail_on_critical": true,
+  "log_location": "memory/audit.jsonl"
+}

@@ -1,0 +1,251 @@
+{
+  "version": "1.0",
+  "generated": "2026-02-24T10:25:00Z",
+  "summary": {
+    "total_skills": 12,
+    "live": 8,
+    "planned": 4,
+    "integration_count": 3
+  },
+  "skills": [
+    {
+      "id": "email-monitor",
+      "name": "Gmail Monitoring",
+      "status": "LIVE",
+      "version": "2.1",
+      "deployed": "2026-02-18T06:00:00Z",
+      "last_used": "2026-02-24T05:00:00Z",
+      "domain": ["Operations"],
+      "capabilities": ["urgent-detection", "sender-profiling", "duplicate-prevention", "hyper-personalized-responses"],
+      "path": "/data/.openclaw/workspace/skills/gmail-monitor",
+      "dependencies": ["Gmail API", "IMAP"],
+      "cost_per_execution": "$0.001"
+    },
+    {
+      "id": "calendar-integration",
+      "name": "Google Calendar Management",
+      "status": "LIVE",
+      "version": "1.2",
+      "deployed": "2026-02-20T08:00:00Z",
+      "last_used": "2026-02-24T04:30:00Z",
+      "domain": ["Operations"],
+      "capabilities": ["list-events", "create-events", "attendee-context", "timezone-aware"],
+      "path": "/data/.openclaw/workspace/skills/calendar",
+      "dependencies": ["Google Calendar API", "Service Account"],
+      "cost_per_execution": "$0.0005"
+    },
+    {
+      "id": "github-integration",
+      "name": "GitHub Operations",
+      "status": "LIVE",
+      "version": "1.0",
+      "deployed": "2026-02-18T10:00:00Z",
+      "last_used": "2026-02-24T03:00:00Z",
+      "domain": ["Development"],
+      "capabilities": ["issue-tracking", "pr-monitoring", "repo-analytics"],
+      "path": "/data/.openclaw/workspace/skills/github",
+      "dependencies": ["GitHub API", "gh CLI"],
+      "cost_per_execution": "free"
+    },
+    {
+      "id": "model-router",
+      "name": "Cost-Optimized Model Router",
+      "status": "LIVE",
+      "version": "2.0",
+      "deployed": "2026-02-19T07:50:00Z",
+      "last_used": "2026-02-24T10:00:00Z",
+      "domain": ["Infrastructure"],
+      "capabilities": ["cost-routing", "complexity-classification", "budget-enforcement"],
+      "path": "/data/.openclaw/workspace/skills/model-router",
+      "dependencies": ["session_status tool"],
+      "cost_per_execution": "free",
+      "note": "Default Haiku, escalates on complexity. Post-Feb19 incident fix."
+    },
+    {
+      "id": "memory-extractor",
+      "name": "Memory Extraction & Curation",
+      "status": "LIVE",
+      "version": "1.1",
+      "deployed": "2026-02-18T06:00:00Z",
+      "last_used": "2026-02-23T18:00:00Z",
+      "domain": ["Memory"],
+      "capabilities": ["daily-log-generation", "memory-curation", "decision-tracking"],
+      "path": "/data/.openclaw/workspace/skills/memory-extractor",
+      "dependencies": ["file I/O", "markdown parsing"],
+      "cost_per_execution": "free"
+    },
+    {
+      "id": "checkpoint-enforcement",
+      "name": "Checkpoint Enforcement & Visibility",
+      "status": "LIVE",
+      "version": "1.0",
+      "deployed": "2026-02-24T10:30:00Z",
+      "last_used": "2026-02-24T10:30:00Z",
+      "domain": ["Infrastructure", "Operations"],
+      "capabilities": ["90min-checkpoint-cycle", "status-reporting", "escalation-on-missed-checkpoints", "audit-logging"],
+      "path": "/data/.openclaw/workspace/skills/checkpoint-enforcement",
+      "dependencies": ["Telegram API", "PROJECT-STATE.md"],
+      "cost_per_execution": "free",
+      "note": "Newly deployed. Awaiting Telegram bot token."
+    },
+    {
+      "id": "dashboard-core",
+      "name": "Dashboard & Activity Indicator",
+      "status": "LIVE",
+      "version": "2.0",
+      "deployed": "2026-02-22T17:52:00Z",
+      "last_used": "2026-02-24T10:00:00Z",
+      "domain": ["Operations"],
+      "capabilities": ["project-view", "pipeline-tracking", "memory-timeline", "docs-viewer", "activity-indicator"],
+      "path": "/data/data/dashboard",
+      "dependencies": ["Next.js 14", "NODE_ENV"],
+      "access": "http://100.111.100.15:3001 (via Tailscale)",
+      "cost_per_execution": "free"
+    },
+    {
+      "id": "cryptyx-code-review",
+      "name": "Cryptyx Daily Code Review",
+      "status": "LIVE",
+      "version": "1.0",
+      "deployed": "2026-02-22T22:00:00Z",
+      "last_used": "2026-02-24T08:00:00Z",
+      "domain": ["Cryptyx"],
+      "capabilities": ["commit-analysis", "security-audit", "tech-debt-detection", "coverage-tracking"],
+      "path": "Cron job ID: 8043e78f-93bf-4d3b-98d7-43f08c80d5c2",
+      "schedule": "8 AM Melbourne daily",
+      "dependencies": ["Cryptyx repo access", "GitHub API"],
+      "cost_per_execution": "$0.01",
+      "status_note": "BLOCKED: Missing Cryptyx repo location & build config"
+    },
+    {
+      "id": "daily-brief",
+      "name": "Daily Intelligence Brief",
+      "status": "PLANNED",
+      "version": "0.0",
+      "target_date": "2026-03-03T07:00:00Z",
+      "domain": ["Intelligence", "Operations"],
+      "planned_capabilities": ["regime-analysis", "execution-tracking", "capital-efficiency", "relationship-health", "risk-flags"],
+      "description": "Proactive daily delivery (7 AM Melbourne): regime status, execution pipeline, capital ROI, 3 key risks, 1 action item",
+      "delivery": "Telegram",
+      "dependencies": ["CoinMarketCap API", "FRED API", "Deribit API", "CRM data"],
+      "estimated_cost_per_execution": "$0.005"
+    },
+    {
+      "id": "expert-analyst-system",
+      "name": "Parallel Expert Analyst Personas",
+      "status": "PLANNED",
+      "version": "0.0",
+      "target_date": "2026-03-05T00:00:00Z",
+      "domain": ["Intelligence"],
+      "planned_capabilities": ["independent-thinking", "perspective-diversity", "bias-detection", "decision-sharpening"],
+      "description": "3 independent expert personas (Architect, Growth Skeptic, Risk Guardian) analyze major decisions in parallel before you commit",
+      "delivery": "Telegram or Dashboard",
+      "estimated_cost_per_execution": "$0.02"
+    },
+    {
+      "id": "autonomous-learning",
+      "name": "Autonomous Learning & Feature Proposal",
+      "status": "PLANNED",
+      "version": "0.0",
+      "target_date": "2026-03-02T02:00:00Z",
+      "domain": ["Infrastructure", "Learning"],
+      "planned_capabilities": ["daily-content-scanning", "pattern-detection", "relevance-scoring", "confidence-filtering", "feature-proposal-generation"],
+      "sources": ["X API", "YouTube transcripts", "Reddit", "GitHub issues"],
+      "delivery": "Telegram batch every 1-2 days",
+      "description": "Daily scan of OpenClaw community usage. Extract patterns relevant to your workflow. Propose new features with confidence scores.",
+      "estimated_cost_per_execution": "$0.005"
+    },
+    {
+      "id": "google-drive-sync",
+      "name": "Google Drive Backup & Sync",
+      "status": "PLANNED",
+      "version": "0.0",
+      "target_date": "2026-02-25T08:00:00Z",
+      "domain": ["Infrastructure"],
+      "planned_capabilities": ["hourly-incremental-backup", "daily-full-backup", "folder-mirroring", "sensitive-data-exclusion"],
+      "structure": "galeboetticher.cloud/_WORKSPACE_BACKUP/ + domain-specific folders (VANA, Cryptyx)",
+      "estimated_cost_per_execution": "$0.0001",
+      "note": "Lowest priority—storage is cheap, integration is lightweight"
+    }
+  ],
+  "roadmap": [
+    {
+      "week": 1,
+      "target": "Memory System + Checkpoint Enforcement + Guardrails",
+      "status": "IN PROGRESS",
+      "eta_date": "2026-02-27T23:59:00Z",
+      "components": [
+        "guardrails.json (DONE)",
+        "checkpoint-enforcement (DONE - awaiting bot token)",
+        "audit.jsonl (DONE)",
+        "skill-manifest.json (DONE)",
+        "Memory validation hooks (IN PROGRESS)"
+      ],
+      "showcase": "Zero-gap memory + visible checkpoint status on dashboard"
+    },
+    {
+      "week": 2,
+      "target": "Dashboard Reorganization + Google Drive Sync",
+      "status": "PENDING",
+      "eta_date": "2026-03-06T23:59:00Z",
+      "components": [
+        "Dashboard folder structure (Projects/Pipeline/Memory/Docs)",
+        "Drill-down to full detail",
+        "Activity indicator (fed by checkpoint-state.json)",
+        "Google Drive cron sync",
+        "Capability tracker UI"
+      ],
+      "showcase": "Single click from project list to full workstream details"
+    },
+    {
+      "week": 3,
+      "target": "Autonomous Learning Framework",
+      "status": "PENDING",
+      "eta_date": "2026-03-13T23:59:00Z",
+      "components": [
+        "X API scanner",
+        "YouTube transcript ingestion",
+        "Pattern extraction & deduplication",
+        "Relevance scoring (confidence gates)",
+        "Telegram batch proposals"
+      ],
+      "showcase": "First learned feature proposal: 'Add CRM from X-scanning' with sources"
+    },
+    {
+      "week": 4,
+      "target": "Deploy Learned Features + Expert Analyst System",
+      "status": "PENDING",
+      "eta_date": "2026-03-20T23:59:00Z",
+      "components": [
+        "Implement top-voted learned features",
+        "Parallel expert personas (Architect/Skeptic/Guardian)",
+        "Integration with decision workflows"
+      ],
+      "showcase": "First decision analyzed by all 3 experts independently"
+    }
+  ],
+  "integrations": [
+    {
+      "name": "Google APIs",
+      "services": ["Gmail", "Calendar", "Drive"],
+      "status": "LIVE",
+      "auth": "Service account"
+    },
+    {
+      "name": "GitHub",
+      "status": "LIVE",
+      "auth": "PAT (read-only)"
+    },
+    {
+      "name": "Telegram",
+      "status": "AWAITING_CONFIG",
+      "note": "Bot token needed"
+    }
+  ],
+  "next_actions": [
+    "Provide Telegram bot token (unblocks checkpoint notifications)",
+    "Provide Cryptyx repo location & build config (unblocks code review)",
+    "Approve dashboard reorganization plan (ready to build)",
+    "Provide decision frameworks for GC operating patterns (inputs for Expert Analyst personas)"
+  ]
+}

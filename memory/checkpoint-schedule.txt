@@ -1,0 +1,42 @@
+CHECKPOINT ENFORCEMENT SCHEDULE
+================================
+Current Time: 21:42 Melbourne (2026-02-24)
+Interval: Every 90 minutes
+Status: LIVE (Telegram notifications active)
+
+Next Checkpoints (Melbourne Time):
+- 23:12 (Feb 24) [90 min from ~21:42 start]
+- 00:42 (Feb 25)
+- 02:12 (Feb 25)
+- 03:42 (Feb 25)
+- 05:12 (Feb 25)
+- 06:42 (Feb 25)
+- 08:12 (Feb 25)
+- 09:42 (Feb 25)
+- 11:12 (Feb 25)
+- 12:42 (Feb 25)
+... (continuing every 90 min)
+
+TIMEZONE FORMULA (Locked In):
+================================
+Melbourne = KL time + 3 hours
+Example: 18:42 KL = 21:42 Melbourne
+
+Daemon Status:
+- PID: 9246
+- Telegram token: ACTIVE
+- Last checkpoint: 2026-02-24 10:40:58 UTC (est. 21:40 Melbourne)
+- Next checkpoint: ~23:12 Melbourne
+
+How Checkpoints Work:
+1. Daemon wakes every 90 min
+2. Checks PROJECT-STATE.md for recent changes
+3. If changes detected → ✅ WORKING (checkpoint passes)
+4. If no changes + no documented blocker → ⚠️ IDLE (escalation alert)
+5. Telegram notification sent with status
+6. Result logged to: memory/audit.jsonl
+
+Current State:
+- Checkpoint daemon running (PID: 9246)
+- Telegram notifications ACTIVE
+- All systems operational

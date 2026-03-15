@@ -1,0 +1,195 @@
+{
+  "research_note_schema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique identifier (interview_YYYYMMDD_memberalias)"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "UTC timestamp"
+      },
+      "note_type": {
+        "type": "string",
+        "enum": ["interview", "research", "finding", "alert", "synthesis"],
+        "description": "Type of research note"
+      },
+      "source": {
+        "type": "object",
+        "properties": {
+          "member": {
+            "type": "string",
+            "description": "Member name or alias (giancarlocudrig, kailash, harrison, etc.)"
+          },
+          "channel": {
+            "type": "string",
+            "enum": ["telegram", "email", "dm", "interview", "external"],
+            "description": "How the information came in"
+          },
+          "interview_duration_min": {
+            "type": "integer",
+            "description": "If interview: duration in minutes"
+          }
+        },
+        "required": ["member"]
+      },
+      "content": {
+        "type": "object",
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "description": "Name of project/work being discussed"
+          },
+          "problem_statement": {
+            "type": "string",
+            "description": "Core problem they're solving"
+          },
+          "technical_stack": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tools, frameworks, platforms mentioned"
+          },
+          "bottlenecks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "area": {
+                  "type": "string",
+                  "description": "Dev speed, scaling, debugging, etc."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "What's the friction?"
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": ["critical", "high", "medium", "low"]
+                }
+              }
+            }
+          },
+          "momentum_watch": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Projects/frameworks/people they're tracking"
+          },
+          "open_questions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What they want to understand"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "relevance": {
+                  "type": "string",
+                  "description": "Why this matters to their work"
+                }
+              }
+            }
+          },
+          "raw_transcript": {
+            "type": "string",
+            "description": "Direct quotes or detailed notes from conversation"
+          }
+        },
+        "required": ["project_name", "problem_statement"]
+      },
+      "synthesis": {
+        "type": "object",
+        "properties": {
+          "primary_focus_oneliner": {
+            "type": "string",
+            "description": "Single sentence summary"
+          },
+          "connections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "member": {
+                  "type": "string",
+                  "description": "Other group member"
+                },
+                "relevance": {
+                  "type": "string",
+                  "description": "How does this connect to their work?"
+                },
+                "signal_to_flag": {
+                  "type": "boolean",
+                  "description": "Should we alert them?"
+                }
+              }
+            }
+          },
+          "broader_implications": {
+            "type": "string",
+            "description": "What does this tell us about the space?"
+          },
+          "pattern_observations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Patterns emerging across interviews"
+          }
+        }
+      },
+      "action_items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "task": {
+              "type": "string"
+            },
+            "assigned_to": {
+              "type": "string",
+              "enum": ["pinkman", "gale", "member"],
+              "description": "Who follows up?"
+            },
+            "deadline": {
+              "type": "string",
+              "format": "date"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["pending", "in-progress", "done"]
+            }
+          }
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Infrastructure, AI, crypto, automation, scaling, etc."
+      }
+    },
+    "required": ["id", "timestamp", "note_type", "source", "content"]
+  },
+  "finding_severity_levels": {
+    "signal": "Something promising or worth tracking",
+    "alert": "Should notify specific group members immediately",
+    "blocker": "Critical issue or missing tool affecting multiple members",
+    "pattern": "Cross-cutting observation or trend"
+  }
+}

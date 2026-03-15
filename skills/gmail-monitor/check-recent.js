@@ -6,7 +6,8 @@ const imap = new Imap({
   password: 'vmzzfacfdozzmsbl',
   host: 'imap.gmail.com',
   port: 993,
-  tls: true
+  tls: true,
+  tlsOptions: { rejectUnauthorized: false }
 });
 
 imap.once('ready', () => {

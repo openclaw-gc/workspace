@@ -1,0 +1,19 @@
+{
+  "name": "pinkman-listener",
+  "version": "0.1.0",
+  "description": "Telegram bot listener for @pinkman_ai_bot research assistant",
+  "main": "listener.js",
+  "scripts": {
+    "start": "node listener.js",
+    "dev": "node listener.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "crypto",
+    "research",
+    "signals"
+  ],
+  "author": "Gale",
+  "license": "MIT"
+}

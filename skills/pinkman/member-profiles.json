@@ -1,0 +1,58 @@
+{
+  "members": {
+    "giancarlocudrig": {
+      "name": "Giancarlo Cudrig",
+      "username": "giancarlocudrig",
+      "focus_areas": [
+        "Digital asset treasury architecture",
+        "Multi-factor intelligence systems",
+        "Quantitative regime analysis",
+        "Token economics & governance",
+        "AI-native financial infrastructure",
+        "Risk frameworks for crypto"
+      ],
+      "current_work": "Vana Foundation Head of Finance / Token Strategy",
+      "key_contacts": "Pinkman primary",
+      "interview_status": "pending"
+    },
+    "kailash": {
+      "name": "Kailash Chandrasekaran",
+      "username": "ckv99",
+      "focus_areas": [
+        "AI automation frameworks",
+        "Agent architecture patterns",
+        "Data infrastructure",
+        "System design at scale"
+      ],
+      "current_work": "building something",
+      "interview_status": "pending"
+    },
+    "harrison": {
+      "name": "Harrison",
+      "focus_areas": [
+        "TBD - pending interview"
+      ],
+      "current_work": "TBD",
+      "interview_status": "pending"
+    },
+    "nigel": {
+      "name": "Nigel",
+      "focus_areas": [
+        "TBD - pending interview"
+      ],
+      "current_work": "TBD",
+      "interview_status": "pending"
+    },
+    "soro": {
+      "name": "Soro",
+      "focus_areas": [
+        "TBD - pending interview"
+      ],
+      "current_work": "TBD",
+      "interview_status": "pending"
+    }
+  },
+  "connections": {
+    "notes": "All members are ex-Immutable, building in AI/automation/crypto/startups space"
+  }
+}

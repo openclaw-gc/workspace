@@ -242,6 +242,59 @@ node skills/pinkman/weekly-summary.js
 - Model router shadow validation: logging classifications for 24h analytics (target: 50-100 samples) — FAILED: router not auto-switching
 - **EMAIL POLICY**: GC must be CC'd on ALL emails sent from gale.boetticher.ai@gmail.com (no exceptions)
 
+## CRITICAL ESCALATION: Cryptyx Build Broken + 39-Day Pause (Apr 5, 2026)
+
+**Timeline:** February 27 (last commit) → April 5 (39-day pause, now CRITICAL)
+
+**Current State (as of Apr 5, 23:00 KL):**
+- 🔴 **BUILD BROKEN:** npm install fails (missing jspdf, @anthropic-ai/sdk). Cannot compile or deploy.
+- 🔴 **SECURITY CRITICAL:** 15 vulnerabilities (1 CRITICAL jsPDF injection, 7 HIGH, 7 MODERATE)
+  - jsPDF code injection (XSS vector)
+  - flatted DoS (object nesting attack)
+  - esbuild potential RCE
+  - Full details in Apr 1 code review report
+- 🔴 **TEST COVERAGE:** 0% (no Jest/Vitest configured) — zero safety net for 39-day resume
+- 🔴 **CODE QUALITY:** 225 ESLint issues (2 errors, 223 warnings) — institutional blocker
+- 🟡 **Vana Integration:** 27 days overdue (original target March 9)
+- ✅ Code review cron running daily (Mar 30, Apr 1 reports generated) → **NO ACTION TAKEN**
+- ❌ **5 code audit findings (Feb 22) still unfixed** (timing attack, per-user validation, error sanitizer, query timeout, signal validation)
+- ❌ **Documentation discipline failed (7 consecutive days undocumented, Mar 30-Apr 5)**
+
+**Root Cause:** 39-day pause without status communication. Code review alerts delivered daily but not acted upon. Build degraded from stable → broken. System health deteriorated silently.
+
+**Code Review Findings (Mar 17 & Mar 21 Reports):**
+- No new commits since Feb 27 (21 days idle as of Mar 21)
+- 4,663 TS/TSX files, ~60,900 LOC
+- Next.js 14.2.35 (2 high-severity CVEs pending upgrade to 16.1.6)
+- 12 npm audit vulnerabilities (6 high, 6 moderate; minimatch ReDoS, Next.js DoS patterns)
+- TypeScript compilation: 10 errors (missing @anthropic-ai/sdk, jspdf, implicit any types)
+- ESLint: 32 issues (2 errors: prefer-const; 30 warnings: React hooks, image optimization)
+- Test coverage: 0% (no Jest/Vitest configured)
+- Zod schema limit increases 2x in final commits (Feb 27) suggest growing complexity
+
+**Why the Pause Matters:**
+- Security findings unfixed for 3 weeks (acceptable given stable state, but quality signal)
+- No CI/CD automation: lint, test, security scanning all manual
+- Data freshness pattern repeats in last 3 commits (#129, #121, #125) → possible systemic issue
+- Unclear blockers: is this intentional planning phase or resource shift?
+
+**What's NOT Blocked:**
+- Daily code review automation running smoothly (cron 8043e78f, deliveries consistent)
+- Infrastructure stable (no errors, no degradation)
+- Pinkman listener operational (some 429/502 errors but recovering)
+- Cost management at $6.40/day baseline (Haiku default, stable)
+
+**Action Required:**
+- [ ] Clarify Cryptyx roadmap + execution timeline with GC (planning vs. pause?)
+- [ ] Fix 5 code audit findings (~4h total) before Phase 4 scale-out
+- [ ] Configure GitHub Actions CI (ESLint, Jest, security scanning)
+- [ ] Load test for 500 assets + concurrent backtests
+- [ ] Stage & validate Phase 3c n8n handoff before production
+
+**Lesson Locked In:** Execution pauses (even intentional) must be logged same-day. "No work" is still work—mark it explicitly in PROJECT-STATE.md + daily log to prevent checkpoint ambiguity.
+
+---
+
 ## Key Decisions (Day 4 — 2026-02-19)
 - CRITICAL: Model router cost failure identified — router logged but never switched models, caused $80 overnight burn
 - **IMMEDIATE FIX APPLIED**: Default model Sonnet → Haiku (91.6% cost reduction, $76.50/day → $6.40/day)
@@ -280,7 +333,7 @@ node skills/pinkman/weekly-summary.js
 - Daily logging discipline is mandatory — prevents exactly this scenario
 - Grace period: If work isn't logged by 23:00 KL same day, it's considered missed for checkpoint purposes
 
-## Operational Status Summary (As of Mar 15, 2026)
+## Operational Status Summary (As of Mar 29, 2026)
 
 **LIVE & STABLE:**
 - ✅ Pinkman listener infrastructure (operational since Mar 6, 04:28 UTC)
@@ -289,15 +342,38 @@ node skills/pinkman/weekly-summary.js
 - ✅ Memory system Phase 1-2 (deployed, audit trail active)
 - ✅ Cost management Phase 1 (Haiku default, $6.40/day stable)
 - ✅ All Feb infrastructure (email, calendar, GitHub, dashboard, Tailscale VPN)
+- ✅ Code review automation running daily (no action taken on findings)
 
-**READY FOR NEXT PHASE:**
-- 📋 Cryptyx Code Audit (5 findings identified, <5h to fix)
-- 📋 Cryptyx Phase 3c activation (n8n handoff, needs staging validation)
-- 📋 Memory System Phase 3 (dashboard reorganization, drive sync, capability tracker)
+**BLOCKED/STALLED:**
+- 🔴 Cryptyx: 30-day pause continues, 5 findings unfixed, no execution signal
+- 📋 Memory system Phase 3 (dashboard reorganization, drive sync, capability tracker)
 
 **PENDING EXTERNAL INPUTS:**
-- ⏳ Cryptyx repo location + build config (needed for CI integration)
+- ⏳ Cryptyx pause clarification: Is this intentional planning or resource shift?
+- ⏳ Cryptyx fix + Phase 4 unlock decision
 - ⏳ VANA integration scope definition (treasury components vs. full integration)
+
+## Documentation Discipline Crisis (Mar 1-29, 2026) — PATTERN IDENTIFIED
+
+**The Pattern:**
+- Week 1 (Mar 1-7): No daily logs despite Pinkman deployment
+- Week 2 (Mar 8-14): Gap continues
+- Week 3 (Mar 15-22): Consolidation catches up, resets discipline expectation ("daily logging is mandatory")
+- Week 4 (Mar 23-29): **Gap repeats** — 7 consecutive days, no daily logs, cron still running, infrastructure stable
+
+**Root Cause:** Checkpoint system doesn't enforce daily logging; consolidation only runs weekly. Between consolidations, discipline decays.
+
+**Why This Matters:**
+- Cryptyx pause is 30 days. Is it intentional? Only way to know: daily documentation.
+- Code review automation generates insights nobody acts on (no project update = no signal of receipt).
+- GC loses visibility into what's working vs. what's paused vs. what's waiting.
+- "Execution stalled" becomes indistinguishable from "execution paused deliberately."
+
+**Lesson Locked In:** 
+**Daily logging is not optional.** Grace period was an experiment; it failed. Need:
+1. **Same-day enforcement**: Work not logged by 23:00 KL = escalation (not next-week review)
+2. **Explicit pause signals**: If intentional pause, document it same-day in PROJECT-STATE.md (don't leave as ambiguous)
+3. **Audit trail** (already exists): Use it to surface "no activity" alerts via checkpoint daemon
 
 ## Lessons Learned (Weekly Consolidation)
 

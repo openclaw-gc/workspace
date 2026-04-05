@@ -52,9 +52,14 @@
 - **Next:** Revisit when GC ready
 - **Key files:** `deliverables/05-ai-assistant-networking.md`
 
-### Cryptyx
-- **Status:** Dormant (Vana onboarding priority)
-- **Next:** Revisit after Vana Phase 1
+### Cryptyx (CRITICAL: Status Unclear)
+- **Status:** BLOCKED — 30-day pause (Feb 27 last commit → Mar 29)
+- **Blocker:** Pause intent unknown (intentional planning vs. resource shift?)
+- **Code Quality:** Still broken (10 TS errors, 32 ESLint issues, 0 test coverage)
+- **Findings:** 5 code audit findings unfixed (<5h total effort, identified Feb 22)
+- **CI/CD:** None configured (blocker for Phase 4 scale)
+- **Next:** GC decision on: (1) pause intent, (2) Phase 4 unlock criteria, (3) Vana integration scope
+- **Action:** Escalate to GC; 30-day ambiguity blocks planning
 
 ### Model Cost Optimization
 - **Status:** ✅ Complete (Sonnet 4.5 active, router in shadow mode)
@@ -126,7 +131,26 @@
 
 ---
 
-## Pending GC Decisions
+## Critical Decisions Needed Now (Mar 29, 2026)
+
+### 🔴 Cryptyx Pause (30 days)
+1. **Is the pause intentional?** (planning, evaluation, or resource shift?)
+2. **What unblocks Phase 4?** (findings fixed? CI/CD automated? Vana scope defined?)
+3. **When will Phase 3c staging validation happen?** (currently blocked on clarification)
+
+### 🔴 Documentation Discipline Pattern
+**Issue:** Daily logging failing for consecutive weeks despite weekly consolidation resets.
+- Week 1-2 (Mar 1-14): Gap, no logs
+- Week 3 (Mar 15-22): Consolidation resets expectations
+- Week 4 (Mar 23-29): **Same gap repeats immediately**
+
+**Root cause:** No between-consolidation enforcement; checkpoint daemon incomplete.
+
+**Decision needed:** 
+- Option A: Commit to daily logging discipline (same-day enforcement required)
+- Option B: Adjust system to surface state automatically (use cron reports + audit trail instead of manual logs)
+
+## Pending GC Decisions (Older)
 
 1. ~~Domain/subdomain~~ ✅ DONE
 2. ~~GitHub org~~ ✅ DONE
